@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+
+   <!-- 수정 후 새로가져오기-->
+   <select id="selectUserByNo" parameterType="int" resultType="com.javaex.vo.UserVo">
+   <![CDATA[
+   		select  no,
+   				name
+   		from users
+   		where no = #{no}
+   ]]>
+   </select>
+
+	<!-- 회원정보수정 -->
+	<update id="updateUser" parameterType="com.javaex.vo.UserVo">
+	<![CDATA[
+		update users
+		set password = #{password},
+		name = #{name},
+		gender = #{gender}
+		where no = #{no};
+	]]>
+	</update>
+
+   <!-- 회원정보수정폼 - 번호로 아이디 가져오기-->
+   <select id="selectIdByNo" parameterType="int" resultType="com.javaex.vo.UserVo">
+   <![CDATA[
+   		select  id
+   		from users
+   		where no = #{no}
+   ]]>
+   </select>
+
+   <!-- 로그인-->
+   <select id="selectByIdPw" parameterType="com.javaex.vo.UserVo" resultType="com.javaex.vo.UserVo">
+   <![CDATA[
+   		select  no,
+   				name
+   		from users
+   		where id = #{id}
+   		and password = #{password}
+   ]]>
+   </select>
+
+	<!-- 회원가입 -->
+	<insert id="insertUser" parameterType="com.javaex.vo.UserVo">
+	<![CDATA[
+	   	insert into users
+		values(null, #{id}, #{password}, #{name}, #{gender});
+	]]>
+	</insert>
+
+</mapper>
