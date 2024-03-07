@@ -26,7 +26,7 @@ public class GuestController {
 		
 		guestService.exeDeleteGuestbook(guestVo);
 		
-		return "redirect:guest/addlist";
+		return "redirect:addlist";
 	}
 	
 	//삭제폼
@@ -44,7 +44,7 @@ public class GuestController {
 		
 		guestService.exeInsertGuestbook(guestVo);
 	
-		return "redirect:guest/addlist";
+		return "redirect:addlist";
 	}
 	
 	//방명록폼 리스트
