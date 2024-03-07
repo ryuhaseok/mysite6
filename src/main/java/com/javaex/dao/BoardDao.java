@@ -26,7 +26,7 @@ public class BoardDao {
 	public int updateAddHit(int no) {
 		System.out.println("BoardDao.updateAddHit");
 		
-		int count = sqlSession.update("board.updateAddHit");
+		int count = sqlSession.update("board.updateAddHit", no);
 		
 		return count;
 	}

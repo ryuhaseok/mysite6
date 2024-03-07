@@ -6,7 +6,7 @@
 <mapper namespace="board">
 
 	<!-- 글 수정 -->
-	<update id="update">
+	<update id="update" parameterType="com.javaex.vo.BoardVo">
 	<![CDATA[
 		update board
 		set title = #{title},
@@ -16,11 +16,11 @@
 	</update>
 
 	<!-- 글 조회수 증가시키기 -->
-	<update id="updateAddHit">
+	<update id="updateAddHit" parameterType="int">
 	<![CDATA[
 		update board
 		set hit = hit + 1
-		where no = #{no};
+		where no = #{no}
 	]]>
 	</update>
 

@@ -51,7 +51,7 @@ public class BoardController {
 	public String read(@RequestParam(value="no") int no, Model model) {
 		System.out.println("BoardController.read()");
 		
-		//글 조회수 증가시키기 왜안됨?
+		//조회수 증가
 		boardService.exeAddHit(no);
 		
 		//글 정보 가져오기
