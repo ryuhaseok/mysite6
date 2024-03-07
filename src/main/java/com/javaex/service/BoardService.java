@@ -17,14 +17,14 @@ public class BoardService {
 	
 	//글 수정
 	public void exeUpdate(BoardVo boardVo) {
-		System.out.println("BoardDao.exeUpdate");
+		System.out.println("BoardService.exeUpdate");
 		
 		boardDao.update(boardVo);
 	}
 	
 	//글 조회수 증가시키기
 	public int exeAddHit(int no) {
-		System.out.println("BoardDao.exeAddHit");
+		System.out.println("BoardService.exeAddHit");
 		
 		int count = boardDao.updateAddHit(no);
 		
@@ -33,7 +33,7 @@ public class BoardService {
 	
 	//글 읽기
 	public BoardVo exeSelectOne(int no) {
-		System.out.println("BoardDao.exeSelectOne");
+		System.out.println("BoardService.exeSelectOne");
 	
 		BoardVo boardVo = boardDao.selectBoardOne(no);
 		
