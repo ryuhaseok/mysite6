@@ -58,5 +58,16 @@ public class GuestController {
 		model.addAttribute("gList", gList);
 		
 		return "guestbook/addList";
+		
+		
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
+	
+	//ajax 방명록 메인
+	@RequestMapping(value="guest/ajaxindex", method= {RequestMethod.GET, RequestMethod.POST})
+	public String ajaxIndex() {
+		System.out.println("GuestController.ajaxIndex()");
+		
+		return "guestbook/ajaxIndex";
 	}
 }
