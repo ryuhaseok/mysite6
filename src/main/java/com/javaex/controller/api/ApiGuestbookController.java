@@ -23,9 +23,11 @@ public class ApiGuestbookController {
 	//삭제
 	@ResponseBody
 	@RequestMapping(value="/api/guestbooks/delete", method= {RequestMethod.POST})
-	public void delete(@ModelAttribute GuestVo guestVo) {
+	public String delete(@ModelAttribute GuestVo guestVo) {
 		System.out.println("ApiGuestbookController.delete()");
 		guestService.exeDeleteGuestbook(guestVo);
+		
+		return "";
 	}
 	
 	//등록
