@@ -5,6 +5,19 @@
 
 <mapper namespace="guest">
 
+	<!-- ajax 저장 -->
+   <insert id="insertSelectKey" parameterType="com.javaex.vo.GuestVo">
+   <![CDATA[
+   		insert into guestbook
+		values(null, #{name}, #{pw}, #{content}, now())
+   ]]>
+   <selectKey keyProperty="no" resultType="int" order="AFTER">
+   <![CDATA[
+   		select last_insert_id()
+   ]]>
+   </selectKey>
+   </insert>
+
 	<!-- 방명록 삭제 -->
 	<delete id="deleteGuestbook" parameterType="com.javaex.vo.GuestVo">
 	<![CDATA[
@@ -30,6 +43,18 @@
 	        	reg_date regDate,
 	        	content
 		from guestbook
+   ]]>
+   </select>
+   
+      <!-- 한 명 가져오기-->
+   <select id="selectOne" parameterType="int" resultType="com.javaex.vo.GuestVo">
+   <![CDATA[
+	   	select  no,
+				name,
+	        	reg_date regDate,
+	        	content
+		from guestbook
+		where no = #{no}
    ]]>
    </select>
 

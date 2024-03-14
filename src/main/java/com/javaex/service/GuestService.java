@@ -15,6 +15,19 @@ public class GuestService {
 	private GuestDao guestDao;
 	
 	
+	//ajax 등록 
+	public GuestVo exeAddandGuest(GuestVo guestVo) {
+		System.out.println("GuestService.exeAddandGuest()");
+		
+		//저장
+		guestDao.insertSelectKey(guestVo);
+		
+		//1명 데이터 가져오기
+		GuestVo gVo = guestDao.guestBookselectOne(guestVo.getNo());
+		
+		return gVo;
+	}
+	
 	//방명록 삭제
 	public int exeDeleteGuestbook(GuestVo guestVo) {
 		System.out.println("GuestService.exeDeleteGuestbook()");

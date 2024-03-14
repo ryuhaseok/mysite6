@@ -15,6 +15,25 @@ public class GuestDao {
 	private SqlSession sqlSession;
 	
 	
+	//ajax 등록
+	public int insertSelectKey(GuestVo guestVo) {
+		System.out.println("GuestDao.insertSelectKey()");
+		
+		int count = sqlSession.insert("guest.insertSelectKey", guestVo);
+		
+		return count;
+	}
+	
+	//ajax 데이터 1개 가져오기(no로 데이터 가져옴)
+	public GuestVo guestBookselectOne(int no) {
+		System.out.println("GuestDao.guestBookselectOne()");
+		
+		GuestVo guestVo = sqlSession.selectOne("guest.selectOne", no);
+		
+		return guestVo;
+	}
+	
+	
 	//방명록 삭제
 	public int deleteGuestbook(GuestVo guestVo) {
 		System.out.println("GuestDao.deleteGuestbook()");
