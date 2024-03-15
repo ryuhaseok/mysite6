@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,18 +24,33 @@ public class ApiGuestbookController {
 	
 	//삭제
 	@ResponseBody
-	@RequestMapping(value="/api/guestbooks/delete", method= {RequestMethod.POST})
-	public String delete(@ModelAttribute GuestVo guestVo) {
+	@RequestMapping(value="/api/guestbooks/{no}", method= {RequestMethod.DELETE})
+	public int delete(@PathVariable("no") int no, @ModelAttribute GuestVo guestVo) {
 		System.out.println("ApiGuestbookController.delete()");
-		guestService.exeDeleteGuestbook(guestVo);
+		System.out.println(no);
+		System.out.println(guestVo);
 		
-		return "";
+		int count = guestService.exeDeleteGuestbook(guestVo);
+		
+		return count;
 	}
+	
+	/*
+	//삭제2
+	@ResponseBody
+	@RequestMapping(value="/api/guestbooks/delete", method= {RequestMethod.POST})
+	public int delete2(@ModelAttribute GuestVo guestVo) {
+		System.out.println("ApiGuestbookController.delete2()");
+		int count = guestService.exeDeleteGuestbook(guestVo);
+		
+		return count;
+	}
+	*/
 	
 	//등록
 	@ResponseBody
 	@RequestMapping(value="/api/guestbooks", method= {RequestMethod.POST})
-	public GuestVo add(@ModelAttribute GuestVo guestVo) {
+	public GuestVo add(@RequestBody GuestVo guestVo) {
 		System.out.println("ApiGuestbookController.add()");
 		
 		System.out.println(guestVo);

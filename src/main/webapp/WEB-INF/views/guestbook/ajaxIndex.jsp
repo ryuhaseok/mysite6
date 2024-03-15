@@ -11,11 +11,31 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
 .modal{
-	display: block;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 999;
+	overflow: auto;
+	background: rgba(0, 0, 0, .4);
+	display: none;
 }
+
 #myModal .modal-content{
-	width: 818px;
-	border : 1px solid #000000;
+	width: 400px;
+	margin: 100px auto;
+	padding: 0px 20px 20px 20px;
+	background: #ffffff;
+	border : 1px solid #888888;
+}
+
+.closeBtn{
+	text-aline: right;
+	color: #aaaaaa;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
 }
 </style>
 </head>
@@ -88,7 +108,7 @@
 							<div class="closeBtn">×</div>
 							<div class="m-header">패스워드를 입력하세요</div>
 							<div class="m-body">
-								<input type="password" name="password" value=""><br>
+								<input class="m-password" type="password" name="password" value=""><br>
 								<input type="text" name="no" value="">
 							</div>
 							<div class="m-footer">
@@ -119,35 +139,105 @@
 <script>
 //DOM tree가 생성되었을 때
 document.addEventListener("DOMContentLoaded", function(){
-   //리스트 요청 데이터만 받기
-   axios({
-        method: 'get',           // put, post, delete                   
-        url: '${pageContext.request.contextPath}/api/guestbooks',
-        headers: {"Content-Type" : "application/json; charset=utf-8"}, //전송타입
-        //params: guestbookVo,  //get방식 파라미터로 값이 전달
-        //data: guestbookVo,   //put, post, delete 방식 자동으로 JSON으로 변환 전달
-        responseType: 'json' //수신타입
-    })
-    .then(function (response) {
-        //console.log(response); //수신데이타
-        console.log(response.data); //수신데이타
-        
-        //리스트자리에 글을 추가한다
-        for(let i=0; i<response.data.length; i++){
-        	let guestVo = response.data[i];
-        	render(guestVo, "up");
-        }
-        
-    })
-    .catch(function (error) {
-        console.log(error);
-    });
+
+	//리스트요청해서 데이터 받고 그리기
+	getListAndRender();
    
    //등록버튼 클릭했을때(데이터만 받기)
-   let btnAdd = document.querySelector("#guestForm");
+   let guestForm = document.querySelector("#guestForm");
+   guestForm.addEventListener("submit", addAndRender);
    
-   btnAdd.addEventListener("submit", function(event){
-	   event.preventDefault();
+   //모달창 호출 버튼을 클릭했을때
+   let guestbookListArea = document.querySelector("#guestbookListArea");
+   
+   guestbookListArea.addEventListener("click", callModal);// guestbookListArea
+   
+   //모달창 닫기(X)
+   let closeBtn = document.querySelector(".closeBtn");
+   closeBtn.addEventListener("click", closeModal);
+   
+   //모달창의 삭제버튼 클릭 했을때
+   let btnDelete = document.querySelector(".btnDelete");
+   btnDelete.addEventListener("click", deleteAndRemove);//btnDelete
+   
+});//DOMtree
+
+////////////////////////////함수들////////////////////////////////////
+
+//모달창에서 삭제 누르기(글 삭제)
+function deleteAndRemove(){
+	   console.log("클릭");
+	   
+	   //데이터 모으고
+	   let pw = document.querySelector('#myModal [name="password"]').value;
+	   let no = document.querySelector('#myModal [name="no"]').value;
+	   let guestVo = {
+			   pw: pw,
+			   no: no
+	   };
+	   
+	   //서버로 전송
+	   axios({
+		   method: 'delete', // put, post, delete
+		   url: '${pageContext.request.contextPath}/api/guestbooks/' + no +'',
+		   headers: {"Content-Type" : "application/json; charset=utf-8"}, //전송타입
+		   params: guestVo, //get방식 파라미터로 값이 전달
+		   //data: guestbookVo, //put, post, delete 방식 자동으로 JSON으로 변환 전달
+		   responseType: 'json' //수신타입
+		   }).then(function (response) {
+		   	console.log(response); //수신데이타
+		   	console.log(response.data); //수신데이타
+		   	
+		   	if(response.data == 1){
+				let tagid = "#t-" + no;
+				let removeTag = document.querySelector(tagid);
+				
+				removeTag.remove();
+				
+				let modal = document.querySelector(".modal");
+				modal.style.display = "none";
+		   	}
+		   	
+		   }).catch(function (error) {
+		  	 console.log(error);
+		   });
+	   
+}//deleteAndRemove
+
+//모달창 닫기
+function closeModal(){
+	   console.log("모달창 닫기");
+	   
+	   let modal = document.querySelector(".modal");
+		modal.style.display = "none";
+	   
+}//closeModal
+
+//모달창 보이기
+function callModal(event){
+		console.log(event.target.tagName);
+		
+		if(event.target.tagName=="BUTTON"){
+			
+			console.log("모달창 보이기");
+			
+			let modal = document.querySelector(".modal");
+			modal.style.display = "block";
+			
+			
+			//hidden에 no값을
+			let noTag = document.querySelector('[name="no"]');
+			noTag.value = event.target.dataset.no;
+			
+			//패스워드창 비우기
+			document.querySelector('.m-password').value = "";
+		}
+		
+}//callModal
+
+//글 저장하고 그리기
+function addAndRender(event) {
+	event.preventDefault();
 	   console.log("글쓰기버튼 클릭");
 	   
 	   //폼의 데이터 가져오기
@@ -167,8 +257,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		   method: 'post', // put, post, delete
 		   url: '${pageContext.request.contextPath}/api/guestbooks',
 		   headers: {"Content-Type" : "application/json; charset=utf-8"}, //전송타입
-		   params: guestVo, //get방식 파라미터로 값이 전달
-		   //data: guestbookVo, //put, post, delete 방식 자동으로 JSON으로 변환 전달
+		   //params: guestVo, //get방식 파라미터로 값이 전달
+		   data: guestVo, //put, post, delete 방식 자동으로 JSON으로 변환 전달
 		   responseType: 'json' //수신타입
 		   }).then(function (response) {
 		   	console.log(response); //수신데이타
@@ -177,64 +267,41 @@ document.addEventListener("DOMContentLoaded", function(){
 		   	
 		   	render(guestbookVo, "up");
 		   	
-		   }).catch(function (error) {
-		  	 console.log(error);
-		   });
-	   
-   });//btnAdd
-   
-   //모달창 호출 버튼을 클릭했을때
-   let guestbookListArea = document.querySelector("#guestbookListArea");
-   guestbookListArea.addEventListener("click", function(event){
-		console.log(event.target.tagName);
-		
-		if(event.target.tagName=="BUTTON"){
-			/*
-			console.log("모달창 보이기");
-			
-			let modal = document.querySelector(".modal");
-			modal.style.display = "block";
-			*/
-			
-			//hidden에 no값을
-			let noTag = document.querySelector('[name="no"]');
-			noTag.value = event.target.dataset.no;
-		}
-   });// guestbookListArea
-   
-   //모달창의 삭제버튼 클릭 했을때
-   let btnDelete = document.querySelector(".btnDelete");
-   btnDelete.addEventListener("click", function(){
-	   console.log("클릭");
-	   
-	   //데이터 모으고
-	   let pw = document.querySelector('#myModal [name="password"]').value;
-	   let no = document.querySelector('#myModal [name="no"]').value;
-	   let guestVo = {
-			   pw: pw,
-			   no: no
-	   };
-	   
-	   //서버로 전송
-	   axios({
-		   method: 'post', // put, post, delete
-		   url: '${pageContext.request.contextPath}/api/guestbooks/delete',
-		   headers: {"Content-Type" : "application/json; charset=utf-8"}, //전송타입
-		   params: guestVo, //get방식 파라미터로 값이 전달
-		   //data: guestbookVo, //put, post, delete 방식 자동으로 JSON으로 변환 전달
-		   responseType: 'json' //수신타입
-		   }).then(function (response) {
-		   	console.log(response); //수신데이타
+		   	document.querySelector('[name="name"]').value="";
+		   	document.querySelector('[name="pw"]').value="";
+		   	document.querySelector('[name="content"]').value="";
 		   	
 		   }).catch(function (error) {
 		  	 console.log(error);
 		   });
-	   
-   });//btnDelete
-   
-});//DOMtree
+}//addAndRender
 
-//함수들
+//리스트 가져와서 render
+function getListAndRender() {
+	   //리스트 요청 데이터만 받기
+	   axios({
+	        method: 'get',           // put, post, delete                   
+	        url: '${pageContext.request.contextPath}/api/guestbooks',
+	        headers: {"Content-Type" : "application/json; charset=utf-8"}, //전송타입
+	        //params: guestbookVo,  //get방식 파라미터로 값이 전달
+	        //data: guestbookVo,   //put, post, delete 방식 자동으로 JSON으로 변환 전달
+	        responseType: 'json' //수신타입
+	    })
+	    .then(function (response) {
+	        //console.log(response); //수신데이타
+	        console.log(response.data); //수신데이타
+	        
+	        //리스트자리에 글을 추가한다
+	        for(let i=0; i<response.data.length; i++){
+	        	let guestVo = response.data[i];
+	        	render(guestVo, "up");
+	        }
+	        
+	    })
+	    .catch(function (error) {
+	        console.log(error);
+	    });
+}//getListAndRender
 
 //방명록 글 작성
 function render(guestbookVo, dir){
@@ -245,7 +312,7 @@ function render(guestbookVo, dir){
 	console.log(guestbookListArea);
 	
 	let str = '';
-	str += '<table class="guestRead">';
+	str += '<table id="t-'+ guestbookVo.no +'" class="guestRead">';
 	str += '	<colgroup>';
 	str += '		<col style="width: 10%;">';
 	str += '		<col style="width: 40%;">';
